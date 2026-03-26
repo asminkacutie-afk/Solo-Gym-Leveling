@@ -1,0 +1,99 @@
+# ============================================================
+# Dependencies
+# ============================================================
+node_modules/
+.pnp
+.pnp.js
+
+# ============================================================
+# Build outputs
+# ============================================================
+dist/
+build/
+out/
+.next/
+.nuxt/
+.output/
+.vercel/
+.netlify/
+
+# ============================================================
+# Environment variables — NEVER commit real secrets
+# ============================================================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.production
+.env.staging
+
+# ============================================================
+# Prisma generated files
+# ============================================================
+prisma/generated/
+node_modules/.prisma/
+# Keep migrations in git — do NOT ignore prisma/migrations
+
+# ============================================================
+# Logs
+# ============================================================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ============================================================
+# Runtime / OS
+# ============================================================
+.DS_Store
+Thumbs.db
+*.pem
+*.key
+*.cert
+
+# ============================================================
+# Editor / IDE
+# ============================================================
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.swp
+
+# ============================================================
+# Testing
+# ============================================================
+coverage/
+.nyc_output/
+*.lcov
+
+# ============================================================
+# Caching
+# ============================================================
+.cache/
+.parcel-cache/
+.eslintcache
+.stylelintcache
+*.tsbuildinfo
+
+# ============================================================
+# Package manager lock files (keep one, ignore others)
+# ============================================================
+# Uncomment the line for the lock file you are NOT using:
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# ============================================================
+# Misc
+# ============================================================
+*.tgz
+*.tar.gz
+.yarn/install-state.gz

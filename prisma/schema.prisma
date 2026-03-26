@@ -1,0 +1,305 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Discipline {
+  POWER
+  TITAN
+  PRECISION
+  ENDURANCE
+  VITALITY
+  SYNTHESIS
+}
+
+enum League {
+  IRON
+  AWAKENING
+  BRONZE
+  SILVER
+  GOLD
+  MYTHIC
+}
+
+enum MonsterTier {
+  COMMON
+  RARE
+  EPIC
+  LEGENDARY
+  ANCIENT
+}
+
+enum RankBadge {
+  IRON_BODY
+  BRONZE_WARRIOR
+  SILVER_CHAMPION
+  GOLD_TITAN
+  PLATINUM_SOVEREIGN
+  MYTHIC_ARCHON
+}
+
+model User {
+  id              String   @id @default(cuid())
+  email           String   @unique
+  username        String   @unique
+  passwordHash    String?
+  googleId        String?  @unique
+  avatarUrl       String?
+  isPublic        Boolean  @default(false)
+  unitsPreference String   @default("kg")
+  gender          String   @default("male")
+  emailVerified   Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  disciplines      UserDiscipline[]
+  workoutSessions  WorkoutSession[]
+  bodyComps        BodyComposition[]
+  achievements     UserAchievement[]
+  dailyQuests      UserDailyQuest[]
+  tournamentResults TournamentResult[]
+  monsterKills     UserMonsterKill[]
+  leaderboardEntry LeaderboardEntry?
+  streakData       UserStreak?
+  personalRecords  PersonalRecord[]
+}
+
+model UserDiscipline {
+  id         String     @id @default(cuid())
+  userId     String
+  discipline Discipline
+  level      Int        @default(1)
+  xp         Int        @default(0)
+  xpToNext   Int        @default(100)
+  str        Float      @default(0)
+  end        Float      @default(0)
+  pwr        Float      @default(0)
+  spd        Float      @default(0)
+  rec        Float      @default(100)
+  rankBadge  RankBadge  @default(IRON_BODY)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, discipline])
+}
+
+model Exercise {
+  id           String     @id @default(cuid())
+  name         String     @unique
+  discipline   Discipline
+  category     String
+  muscleGroups String[]
+  description  String?
+  isBuiltIn    Boolean    @default(true)
+  sets         WorkoutSet[]
+  personalRecords PersonalRecord[]
+}
+
+model WorkoutSession {
+  id        String    @id @default(cuid())
+  userId    String
+  startedAt DateTime  @default(now())
+  endedAt   DateTime?
+  notes     String?
+  xpGained  Json?
+  levelUps  Json?
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sets      WorkoutSet[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model WorkoutSet {
+  id         String         @id @default(cuid())
+  sessionId  String
+  exerciseId String
+  setNumber  Int
+  weight     Float?
+  reps       Int?
+  duration   Int?
+  distance   Float?
+  rpe        Float?
+  isPR       Boolean        @default(false)
+  session    WorkoutSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  exercise   Exercise       @relation(fields: [exerciseId], references: [id])
+  createdAt  DateTime       @default(now())
+}
+
+model PersonalRecord {
+  id         String   @id @default(cuid())
+  userId     String
+  exerciseId String
+  weight     Float?
+  reps       Int?
+  oneRepMax  Float?
+  recordedAt DateTime @default(now())
+  exercise   Exercise @relation(fields: [exerciseId], references: [id])
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, exerciseId])
+}
+
+model BodyComposition {
+  id         String   @id @default(cuid())
+  userId     String
+  weight     Float
+  bodyFat    Float
+  lbm        Float
+  method     String   @default("manual")
+  recordedAt DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+}
+
+model Monster {
+  id              String      @id @default(cuid())
+  name            String
+  tier            MonsterTier
+  league          League
+  powerStat       Float
+  titanStat       Float
+  precisionStat   Float
+  enduranceStat   Float
+  vitalityStat    Float
+  synthesisStat   Float
+  densityStat     Float       @default(1.0)
+  difficultyMult  Float
+  svgData         String?
+  month           Int
+  year            Int
+  timesDefeated   Int         @default(0)
+  totalEncounters Int         @default(0)
+  isActive        Boolean     @default(true)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  kills           UserMonsterKill[]
+}
+
+model UserMonsterKill {
+  id        String   @id @default(cuid())
+  userId    String
+  monsterId String
+  killedAt  DateTime @default(now())
+  margin    Json
+  roundsWon Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  monster   Monster  @relation(fields: [monsterId], references: [id])
+
+  @@unique([userId, monsterId])
+}
+
+model Tournament {
+  id         String   @id @default(cuid())
+  month      Int
+  year       Int
+  league     League
+  startedAt  DateTime
+  endedAt    DateTime?
+  isComplete Boolean  @default(false)
+  results    TournamentResult[]
+
+  @@unique([month, year, league])
+}
+
+model TournamentResult {
+  id               String     @id @default(cuid())
+  tournamentId     String
+  userId           String
+  powerScoreAtTime Float
+  monstersDefeated Int        @default(0)
+  bossDefeated     Boolean    @default(false)
+  rankInLeague     Int?
+  previousLeague   League
+  newLeague        League
+  wasPromoted      Boolean    @default(false)
+  wasRelegated     Boolean    @default(false)
+  slayerBadge      Boolean    @default(false)
+  tournament       Tournament @relation(fields: [tournamentId], references: [id])
+  user             User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt        DateTime   @default(now())
+}
+
+model Achievement {
+  id               String            @id @default(cuid())
+  key              String            @unique
+  name             String
+  description      String
+  icon             String
+  xpReward         Int               @default(0)
+  userAchievements UserAchievement[]
+}
+
+model UserAchievement {
+  id            String      @id @default(cuid())
+  userId        String
+  achievementId String
+  earnedAt      DateTime    @default(now())
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement   Achievement @relation(fields: [achievementId], references: [id])
+
+  @@unique([userId, achievementId])
+}
+
+model DailyQuest {
+  id          String         @id @default(cuid())
+  date        DateTime       @db.Date
+  key         String
+  description String
+  requirement Json
+  xpReward    Int
+  userQuests  UserDailyQuest[]
+
+  @@unique([date, key])
+}
+
+model UserDailyQuest {
+  id          String     @id @default(cuid())
+  userId      String
+  questId     String
+  progress    Int        @default(0)
+  isComplete  Boolean    @default(false)
+  completedAt DateTime?
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quest       DailyQuest @relation(fields: [questId], references: [id])
+
+  @@unique([userId, questId])
+}
+
+model LeaderboardEntry {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  totalPowerScore Float    @default(0)
+  league          League   @default(IRON)
+  totalLevel      Int      @default(6)
+  lastActive      DateTime @default(now())
+  weekRankDelta   Int      @default(0)
+  prevWeekRank    Int?
+  isPublic        Boolean  @default(false)
+  compositionMult Float    @default(1.0)
+  rawPowerScore   Float    @default(0)
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  updatedAt       DateTime @updatedAt
+}
+
+model UserStreak {
+  id                  String    @id @default(cuid())
+  userId              String    @unique
+  currentWeekSessions Int       @default(0)
+  weeklyStreak        Int       @default(0)
+  lastSessionDate     DateTime?
+  restedBonusActive   Boolean   @default(false)
+  lastWeekReset       DateTime  @default(now())
+  user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model GlobalStats {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     Float
+  updatedAt DateTime @updatedAt
+}
