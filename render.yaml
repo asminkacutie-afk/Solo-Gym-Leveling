@@ -1,0 +1,51 @@
+services:
+  - type: web
+    name: gymrpg-api
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: |
+      cd server && npm install &&
+      cd .. && npx prisma generate &&
+      cd server && npm run build
+    startCommand: npx prisma migrate deploy && node server/dist/index.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: gymrpg-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: CLIENT_URL
+        fromService:
+          name: gymrpg-web
+          type: web
+          property: host
+
+  - type: web
+    name: gymrpg-web
+    env: static
+    region: oregon
+    plan: free
+    buildCommand: cd client && npm install && npm run build
+    staticPublishPath: ./client/dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          name: gymrpg-api
+          type: web
+          property: host
+
+databases:
+  - name: gymrpg-db
+    plan: free
+    region: oregon
