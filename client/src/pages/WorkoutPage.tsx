@@ -239,7 +239,7 @@ function BeginScreen({ onStart }: { onStart: (discipline: string) => void }) {
 
 // ─── WorkoutPage ────────────────────────────────────────────────────────────
 export default function WorkoutPage() {
-  const { activeSession, isLogging, clearSession, sessionElapsedSeconds, tickTimer } =
+  const { activeSession, isLogging, clearSession, sessionElapsedSeconds } =
     useWorkoutStore()
   const [summary, setSummary] = useState<WorkoutSession | null>(null)
   const [prSet, setPrSet] = useState<WorkoutSet | null>(null)
