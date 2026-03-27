@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, lazy, Suspense } from 'react'
 import { Skull, Filter } from 'lucide-react'
 import { monsters, profile } from '../lib/api'
 import type { Monster, UserMonsterKill } from '../lib/api'
 import { useAuthStore } from '../store/authStore'
 import MonsterCard from '../components/monsters/MonsterCard'
 import { cn } from '../lib/utils'
+const MonsterIllustration = lazy(() => import('../components/monsters/MonsterIllustration'))
 
 const TIERS = ['all', 'common', 'rare', 'epic', 'legendary', 'ancient'] as const
 type TierFilter = (typeof TIERS)[number]
@@ -97,11 +98,21 @@ export default function MonstersPage() {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {leagueMonsters.map((m) => (
-                  <MonsterCard
-                    key={m.id}
-                    monster={m}
-                    isDefeated={defeatedIds.has(m.id)}
-                  />
+                  <div key={m.id} className="relative">
+                    <Suspense fallback={null}>
+                      <div className="absolute top-3 left-3 z-10 pointer-events-none">
+                        <MonsterIllustration
+                          monsterId={m.id}
+                          tier={m.tier as any}
+                          league={m.league}
+                          difficultyMult={m.difficultyMult ?? 1}
+                          size={64}
+                          animated
+                        />
+                      </div>
+                    </Suspense>
+                    <MonsterCard monster={m} isDefeated={defeatedIds.has(m.id)} />
+                  </div>
                 ))}
               </div>
             </section>

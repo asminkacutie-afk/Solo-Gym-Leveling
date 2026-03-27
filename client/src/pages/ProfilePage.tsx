@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, lazy, Suspense } from 'react'
 import { useParams } from 'react-router-dom'
 import { User, Trophy, Skull, BarChart2, Weight } from 'lucide-react'
 import { useAuthStore } from '../store/authStore'
@@ -6,6 +6,8 @@ import { profile, bodyComp } from '../lib/api'
 import type { PRRecord, UserMonsterKill, BodyCompEntry } from '../lib/api'
 import DisciplineRadarChart from '../components/character/RadarChart'
 import StatBar from '../components/ui/StatBar'
+const HunterCharacterSVG = lazy(() => import('../components/character/HunterCharacterSVG'))
+const BFSlider = lazy(() => import('../components/character/BFSlider'))
 import {
   cn,
   leagueBadgeClass,
@@ -41,20 +43,32 @@ function HunterCard({ user }: { user: ReturnType<typeof useAuthStore>['user'] })
   return (
     <div className="card-glow rounded-2xl bg-background-card p-6">
       <div className="flex flex-col sm:flex-row gap-6 items-center sm:items-start">
-        {/* Avatar */}
-        <div className="relative flex-shrink-0">
-          <div className="w-24 h-24 rounded-2xl bg-purple-700/30 border-2 border-purple-600/50 flex items-center justify-center shadow-purple-glow">
-            <span className="font-display text-4xl font-bold text-purple-300">
-              {user.username.charAt(0).toUpperCase()}
-            </span>
-          </div>
+        {/* Character avatar — HunterCharacterSVG or fallback */}
+        <div className="relative flex-shrink-0 flex flex-col items-center">
+          <Suspense
+            fallback={
+              <div className="w-24 h-24 rounded-2xl bg-purple-700/30 border-2 border-purple-600/50 flex items-center justify-center shadow-purple-glow">
+                <span className="font-display text-4xl font-bold text-purple-300">
+                  {user.username.charAt(0).toUpperCase()}
+                </span>
+              </div>
+            }
+          >
+            <HunterCharacterSVG
+              bodyFat={user.bodyFat ?? 25}
+              powerScore={user.powerScore ?? 0}
+              gender={(user.gender as 'male' | 'female') ?? 'male'}
+              size={120}
+              animated
+            />
+          </Suspense>
           <div
             className={cn(
-              'absolute -bottom-2 -right-2 rank-badge text-[10px] px-2',
+              'mt-1 rank-badge text-[10px] px-2',
               leagueBadgeClass(user.league),
             )}
           >
-            {leagueBadgeEmoji(user.league)}
+            {leagueBadgeEmoji(user.league)} {user.league}
           </div>
         </div>
 
@@ -323,8 +337,30 @@ function BodyCompTab() {
 
   if (loading) return <div className="text-center text-gray-500 py-12">Loading body comp...</div>
 
+  const handleSetCurrent = async (bf: number) => {
+    setSubmitting(true)
+    try {
+      await bodyComp.log({ weight: history[0]?.weight ?? 80, bodyFatPct: bf, method: 'manual' })
+      const updated = await bodyComp.getHistory()
+      setHistory(updated)
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
   return (
     <div className="space-y-6">
+      {/* Interactive BF slider + character preview */}
+      <Suspense fallback={<div className="h-96 skeleton rounded-2xl" />}>
+        <BFSlider
+          currentBodyFat={currentBF ?? null}
+          currentWeight={history[0]?.weight ?? null}
+          powerScore={user?.powerScore ?? 0}
+          gender={(user?.gender as 'male' | 'female') ?? 'male'}
+          onSetCurrent={handleSetCurrent}
+        />
+      </Suspense>
+
       {/* Composition lock warnings */}
       {gates.filter((g) => !g.met && currentBF && currentBF > g.maxBodyFat).length > 0 && (
         <div className="flex items-start gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/25">

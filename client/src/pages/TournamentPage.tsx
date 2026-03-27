@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, lazy, Suspense } from 'react'
 import { ChevronDown, ChevronUp, Swords, Trophy, Crown, TrendingUp, TrendingDown } from 'lucide-react'
 import { tournaments } from '../lib/api'
 import type { Tournament, TournamentResult } from '../lib/api'
 import { useAuthStore } from '../store/authStore'
 import MonsterCard from '../components/monsters/MonsterCard'
 import { cn, leagueBadgeClass, leagueBadgeEmoji, formatDate } from '../lib/utils'
+const ArenaBg = lazy(() => import('../components/arena/ArenaBg'))
+const MonsterIllustration = lazy(() => import('../components/monsters/MonsterIllustration'))
 
 // ─── Tournament status card ────────────────────────────────────────────────
 function TournamentStatusCard({ t }: { t: Tournament }) {
@@ -25,10 +27,33 @@ function TournamentStatusCard({ t }: { t: Tournament }) {
   return (
     <div
       className={cn(
-        'card-glow rounded-2xl bg-background-card p-6',
+        'card-glow rounded-2xl bg-background-card overflow-hidden',
         isActive && 'border border-gold-500/30 shadow-gold-glow-sm',
       )}
     >
+      {/* Arena background banner */}
+      <div className="relative h-28 overflow-hidden">
+        <Suspense fallback={<div className="h-full bg-background-secondary" />}>
+          <ArenaBg
+            league={t.league as any}
+            width={800}
+            height={112}
+            animated={isActive}
+            intensity={isActive ? 'combat' : 'calm'}
+            className="w-full h-full"
+          />
+        </Suspense>
+        {/* Overlay gradient so content below is readable */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background-card" />
+        {/* Active LIVE badge floating over arena */}
+        {isActive && (
+          <div className="absolute top-3 left-4 flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-green-400 animate-ping-slow" />
+            <span className="text-xs font-bold text-green-400 tracking-widest font-display">LIVE</span>
+          </div>
+        )}
+      </div>
+      <div className="p-6">
       <div className="flex flex-wrap items-start justify-between gap-4 mb-5">
         <div>
           <div className="flex items-center gap-2 mb-2">
@@ -86,15 +111,30 @@ function TournamentStatusCard({ t }: { t: Tournament }) {
         </div>
       </div>
 
-      {/* Boss monster */}
+      {/* Boss monster with illustration */}
       {t.bossMonster && (
         <div>
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">
             Tournament Boss
           </p>
-          <MonsterCard monster={t.bossMonster} isDefeated={false} compact />
+          <div className="flex gap-4 items-center bg-background-secondary rounded-xl p-3 border border-blood-600/20">
+            <Suspense fallback={<div className="w-16 h-16 skeleton rounded-xl flex-shrink-0" />}>
+              <MonsterIllustration
+                monsterId={t.bossMonster.id}
+                tier={t.bossMonster.tier as any}
+                league={t.league}
+                difficultyMult={t.bossMonster.difficultyMult ?? 2.2}
+                size={72}
+                animated
+              />
+            </Suspense>
+            <div className="flex-1 min-w-0">
+              <MonsterCard monster={t.bossMonster} isDefeated={false} compact />
+            </div>
+          </div>
         </div>
       )}
+    </div>
     </div>
   )
 }
