@@ -1,8 +1,44 @@
-import { cn, disciplineIcon, disciplineColor, rankBadgeClass, calculateLevelProgress, formatXP } from '../../lib/utils'
+import { useEffect, useRef, useState } from 'react'
+import { motion } from 'framer-motion'
+import DisciplineSVGBadge from './DisciplineSVGBadge'
+import AnimatedNumber from '../ui/AnimatedNumber'
+import { cn, disciplineColor, rankBadgeClass, calculateLevelProgress, formatXP } from '../../lib/utils'
 import type { DisciplineData } from '../../lib/api'
 
 interface DisciplineCardProps {
   discipline: DisciplineData
+}
+
+// ─── Discipline glow colors ────────────────────────────────────────────────
+const DISCIPLINE_GLOW: Record<string, string> = {
+  power: 'rgba(239,68,68,0.4)',
+  strength: 'rgba(239,68,68,0.4)',
+  titan: 'rgba(245,158,11,0.4)',
+  precision: 'rgba(56,189,248,0.4)',
+  endurance: 'rgba(16,185,129,0.4)',
+  speed: 'rgba(16,185,129,0.4)',
+  vitality: 'rgba(236,72,153,0.4)',
+  flexibility: 'rgba(236,72,153,0.4)',
+  synthesis: 'rgba(139,92,246,0.4)',
+  recovery: 'rgba(139,92,246,0.4)',
+}
+
+function getDisciplineGlow(name: string): string {
+  return DISCIPLINE_GLOW[name.toLowerCase()] ?? 'rgba(139,92,246,0.4)'
+}
+
+// ─── Rank badge styles ─────────────────────────────────────────────────────
+const RANK_STYLES: Record<string, { bg: string; border: string; text: string }> = {
+  iron:     { bg: 'rgba(107,114,128,0.2)', border: '#6b7280', text: '#9ca3af' },
+  bronze:   { bg: 'rgba(180,83,9,0.2)',   border: '#d97706', text: '#fbbf24' },
+  silver:   { bg: 'rgba(100,116,139,0.2)',border: '#94a3b8', text: '#cbd5e1' },
+  gold:     { bg: 'rgba(161,98,7,0.2)',   border: '#ca8a04', text: '#facc15' },
+  platinum: { bg: 'rgba(8,145,178,0.2)',  border: '#22d3ee', text: '#67e8f9' },
+  mythic:   { bg: 'rgba(109,40,217,0.2)', border: '#a78bfa', text: '#c4b5fd' },
+}
+
+function getRankStyle(rank: string) {
+  return RANK_STYLES[rank.toLowerCase()] ?? RANK_STYLES.iron
 }
 
 const STAT_ABBREV: Record<string, string> = {
@@ -14,101 +50,200 @@ const STAT_ABBREV: Record<string, string> = {
   flexibility: 'FLX',
 }
 
-export default function DisciplineCard({ discipline }: DisciplineCardProps) {
-  const color = disciplineColor(discipline.name)
-  const icon = disciplineIcon(discipline.name)
-  const pct = calculateLevelProgress(discipline.xp, discipline.xpToNext)
-  const rankClass = rankBadgeClass(discipline.rank)
-  const statEntries = Object.entries(discipline.stats ?? {}).slice(0, 5)
+// ─── Animated stat bar ─────────────────────────────────────────────────────
+function AnimatedStatBar({
+  label,
+  value,
+  color,
+  delay = 0,
+}: {
+  label: string
+  value: number
+  color: string
+  delay?: number
+}) {
+  const [animated, setAnimated] = useState(false)
+
+  useEffect(() => {
+    const t = setTimeout(() => setAnimated(true), delay + 80)
+    return () => clearTimeout(t)
+  }, [delay])
+
+  const pct = Math.min(100, Math.max(0, value))
 
   return (
-    <div
-      className="card-glow rounded-xl bg-background-card p-4 transition-all duration-300 hover:scale-[1.01] cursor-default"
+    <div className="flex items-center gap-2 p-2 rounded-lg" style={{ background: 'rgba(255,255,255,0.04)' }}>
+      <span
+        className="text-[10px] font-bold w-7 shrink-0 uppercase tracking-wider"
+        style={{ color: '#38bdf8' }}
+      >
+        {label}
+      </span>
+      <div
+        className="flex-1 h-1.5 rounded-full overflow-hidden"
+        style={{ background: 'rgba(255,255,255,0.06)' }}
+      >
+        <div
+          className="h-full rounded-full"
+          style={{
+            width: animated ? `${pct}%` : '0%',
+            backgroundColor: color,
+            boxShadow: `0 0 6px ${color}60`,
+            transition: 'width 0.7s cubic-bezier(0.4,0,0.2,1)',
+          }}
+        />
+      </div>
+      <AnimatedNumber
+        value={value}
+        duration={600}
+        decimals={0}
+        className="text-[10px] font-semibold w-6 text-right shrink-0"
+      />
+    </div>
+  )
+}
+
+// ─── DisciplineCard ────────────────────────────────────────────────────────
+export default function DisciplineCard({ discipline }: DisciplineCardProps) {
+  const [hovered, setHovered] = useState(false)
+  const color = disciplineColor(discipline.name)
+  const glow = getDisciplineGlow(discipline.name)
+  const pct = calculateLevelProgress(discipline.xp, discipline.xpToNext)
+  const rankStyle = getRankStyle(discipline.rank)
+  const rankClass = rankBadgeClass(discipline.rank)
+  const statEntries = Object.entries(discipline.stats ?? {}).slice(0, 5)
+  const xpRemaining = Math.max(0, discipline.xpToNext - discipline.xp)
+
+  return (
+    <motion.div
+      onHoverStart={() => setHovered(true)}
+      onHoverEnd={() => setHovered(false)}
+      animate={{ scale: hovered ? 1.02 : 1 }}
+      transition={{ duration: 0.2, ease: 'easeOut' }}
+      className="rounded-xl overflow-hidden cursor-default relative"
       style={{
-        borderColor: color + '30',
+        background: 'rgba(10,10,20,0.85)',
+        borderLeft: `3px solid ${color}`,
+        borderTop: '1px solid rgba(255,255,255,0.06)',
+        borderRight: '1px solid rgba(255,255,255,0.06)',
+        borderBottom: '1px solid rgba(255,255,255,0.06)',
+        boxShadow: hovered
+          ? `0 0 32px ${glow}, -4px 0 16px ${color}40`
+          : `0 0 12px ${glow}80, -2px 0 8px ${color}20`,
+        transition: 'box-shadow 0.25s ease',
       }}
     >
-      {/* Header row */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <div
-            className="w-9 h-9 rounded-lg flex items-center justify-center text-lg"
-            style={{ backgroundColor: color + '20', boxShadow: `0 0 8px ${color}30` }}
-          >
-            {icon}
-          </div>
-          <div>
-            <p className="font-display font-semibold text-gray-100 text-sm leading-tight">
-              {discipline.name}
-            </p>
-            <p className="text-xs text-gray-500">Level {discipline.level}</p>
-          </div>
-        </div>
+      {/* Left border glow line */}
+      <div
+        className="absolute left-0 top-0 bottom-0 w-[3px] pointer-events-none"
+        style={{
+          background: color,
+          boxShadow: hovered ? `0 0 12px 2px ${color}` : `0 0 6px 1px ${color}80`,
+          transition: 'box-shadow 0.25s ease',
+        }}
+      />
 
-        {/* Rank badge */}
-        <span className={cn('rank-badge text-[10px]', rankClass)}>
-          {discipline.rank}
-        </span>
-      </div>
+      <div className="p-4 pl-5">
+        {/* ── Header ──────────────────────────────────── */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            {/* SVG badge with glow */}
+            <div
+              className="rounded-lg p-1.5 flex items-center justify-center"
+              style={{
+                background: `${color}18`,
+                boxShadow: `0 0 10px ${color}30`,
+              }}
+            >
+              <DisciplineSVGBadge discipline={discipline.name} size={36} glow={true} />
+            </div>
 
-      {/* XP bar */}
-      <div className="mb-4">
-        <div className="flex justify-between text-xs text-gray-500 mb-1.5">
-          <span>{formatXP(discipline.xp)}</span>
-          <span>{pct}%</span>
-        </div>
-        <div className="h-2 bg-background-secondary rounded-full overflow-hidden relative">
+            <div>
+              <p
+                className="font-bold text-gray-100 leading-tight"
+                style={{ fontFamily: 'Cinzel, serif', fontSize: '0.95rem' }}
+              >
+                {discipline.name}
+              </p>
+              <p className="text-xs text-gray-500">Level {discipline.level}</p>
+            </div>
+          </div>
+
+          {/* Rank badge */}
           <div
-            className="h-full rounded-full xp-bar-fill"
+            className="px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest"
             style={{
-              '--xp-width': `${pct}%`,
-              width: `${pct}%`,
-              background: `linear-gradient(90deg, ${color}cc, ${color})`,
-              boxShadow: `0 0 8px ${color}60`,
-            } as React.CSSProperties}
-          />
-          {/* Shimmer overlay */}
-          <div
-            className="absolute inset-0 rounded-full"
-            style={{
-              background: `linear-gradient(90deg, transparent 0%, ${color}30 50%, transparent 100%)`,
-              backgroundSize: '200% 100%',
-              animation: 'shimmer 2s linear infinite',
+              background: rankStyle.bg,
+              border: `1px solid ${rankStyle.border}`,
+              color: rankStyle.text,
+              fontFamily: 'Cinzel, serif',
             }}
-          />
+          >
+            {discipline.rank}
+          </div>
         </div>
-        <p className="text-xs text-gray-600 mt-1 text-right">
-          {formatXP(discipline.xpToNext - discipline.xp)} to next level
-        </p>
-      </div>
 
-      {/* Stats mini-grid */}
-      {statEntries.length > 0 && (
-        <div className="grid grid-cols-2 gap-1.5">
-          {statEntries.map(([key, val]) => {
-            const label = STAT_ABBREV[key.toLowerCase()] ?? key.slice(0, 3).toUpperCase()
-            const numVal = Number(val)
-            return (
-              <div key={key} className="flex items-center gap-2 p-1.5 rounded-lg bg-background-secondary">
-                <span className="text-[10px] font-bold text-gray-500 w-8 shrink-0">{label}</span>
-                <div className="flex-1 h-1 bg-background-border rounded-full overflow-hidden">
-                  <div
-                    className="h-full rounded-full"
-                    style={{
-                      width: `${Math.min(100, numVal)}%`,
-                      backgroundColor: color,
-                      opacity: 0.7,
-                    }}
-                  />
-                </div>
-                <span className="text-[10px] text-gray-300 font-semibold w-5 text-right">
-                  {numVal}
-                </span>
-              </div>
-            )
-          })}
+        {/* ── XP bar ──────────────────────────────────── */}
+        <div className="mb-4">
+          <div className="flex justify-between text-xs mb-1.5">
+            <span className="text-gray-400 font-semibold">
+              {formatXP(discipline.xp)} / {formatXP(discipline.xpToNext)}
+            </span>
+            <span className="font-bold" style={{ color }}>
+              {pct}%
+            </span>
+          </div>
+
+          {/* Bar */}
+          <div
+            className="h-2.5 rounded-full overflow-hidden relative"
+            style={{ background: 'rgba(255,255,255,0.06)' }}
+          >
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${pct}%` }}
+              transition={{ duration: 1.0, ease: 'easeOut', delay: 0.15 }}
+              className="h-full rounded-full relative overflow-hidden"
+              style={{
+                background: `linear-gradient(90deg, ${color}cc, ${color})`,
+                boxShadow: `0 0 10px ${color}60`,
+              }}
+            >
+              {/* Shimmer */}
+              <div
+                className="absolute inset-0"
+                style={{
+                  background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.25) 50%, transparent 100%)',
+                  backgroundSize: '200% 100%',
+                  animation: 'shimmer 2.2s linear infinite',
+                }}
+              />
+            </motion.div>
+          </div>
+
+          <p className="text-[11px] text-gray-600 mt-1 text-right">
+            {formatXP(xpRemaining)} to next level
+          </p>
         </div>
-      )}
-    </div>
+
+        {/* ── Stats grid ──────────────────────────────── */}
+        {statEntries.length > 0 && (
+          <div className="grid grid-cols-2 gap-1.5">
+            {statEntries.map(([key, val], idx) => {
+              const label = STAT_ABBREV[key.toLowerCase()] ?? key.slice(0, 3).toUpperCase()
+              return (
+                <AnimatedStatBar
+                  key={key}
+                  label={label}
+                  value={Number(val)}
+                  color={color}
+                  delay={idx * 60}
+                />
+              )
+            })}
+          </div>
+        )}
+      </div>
+    </motion.div>
   )
 }
