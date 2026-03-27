@@ -215,7 +215,7 @@ export default function DisciplineRadarChart({ disciplines, showAdjusted = false
           {/* Axis labels with per-discipline color */}
           <PolarAngleAxis
             dataKey="discipline"
-            tick={(props) => <CustomAngleTick {...props} />}
+            tick={(props: CustomTickProps) => <CustomAngleTick {...props} />}
           />
 
           {/* Minimal radius ticks */}
