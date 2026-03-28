@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <linearGradient id="blade-fav" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e2e8f0"/>
+      <stop offset="50%" stop-color="#a78bfa"/>
+      <stop offset="100%" stop-color="#4c1d95"/>
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="6" fill="#0a0a0f"/>
+  <path d="M 16 4 L 26 8 L 26 16 C 26 22 21 27 16 29 C 11 27 6 22 6 16 L 6 8 Z"
+    fill="#1a0d2e" stroke="#7c3aed" stroke-width="1.5"/>
+  <rect x="14.5" y="7" width="3" height="14" rx="1" fill="url(#blade-fav)"/>
+  <rect x="9" y="17" width="14" height="3" rx="1.5" fill="#f59e0b"/>
+  <ellipse cx="16" cy="24" rx="3" ry="2.5" fill="#f59e0b"/>
+</svg>

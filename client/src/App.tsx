@@ -11,6 +11,7 @@ import ProfilePage from './pages/ProfilePage'
 import LeaderboardPage from './pages/LeaderboardPage'
 import TournamentPage from './pages/TournamentPage'
 import MonstersPage from './pages/MonstersPage'
+import InstallBanner from './components/ui/InstallBanner'
 
 // ─── Private Route Guard ───────────────────────────────────────────────────
 function PrivateRoute({ children }: { children: React.ReactNode }) {
@@ -50,6 +51,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-background text-white">
+      <InstallBanner />
       <Routes>
         {/* Public routes */}
         <Route path="/login" element={<LoginPage />} />

@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#1a0d2e"/>
+      <stop offset="100%" stop-color="#0a0a0f"/>
+    </radialGradient>
+    <radialGradient id="aura" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#7c3aed" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#7c3aed" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="gold-glow">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="192" height="192" rx="36" fill="url(#bg)"/>
+
+  <!-- Aura -->
+  <ellipse cx="96" cy="96" rx="80" ry="80" fill="url(#aura)"/>
+
+  <!-- Outer ring -->
+  <circle cx="96" cy="96" r="80" fill="none" stroke="#7c3aed" stroke-width="2" opacity="0.5"/>
+  <circle cx="96" cy="96" r="76" fill="none" stroke="#f59e0b" stroke-width="0.75" opacity="0.3"/>
+
+  <!-- Shield body -->
+  <path d="M 96 28 L 148 52 L 148 96 C 148 126 120 152 96 162 C 72 152 44 126 44 96 L 44 52 Z"
+    fill="#1a0d2e" stroke="#7c3aed" stroke-width="2.5"/>
+
+  <!-- Shield inner border -->
+  <path d="M 96 38 L 138 58 L 138 96 C 138 120 116 142 96 150 C 76 142 54 120 54 96 L 54 58 Z"
+    fill="none" stroke="#f59e0b" stroke-width="1.5" opacity="0.6"/>
+
+  <!-- Sword vertical blade -->
+  <rect x="92.5" y="46" width="7" height="82" rx="2" fill="url(#blade-grad)"
+    filter="url(#glow)" opacity="0.9"/>
+  <defs>
+    <linearGradient id="blade-grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e2e8f0"/>
+      <stop offset="50%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#4c1d95"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Sword crossguard -->
+  <rect x="70" y="100" width="52" height="8" rx="4" fill="#f59e0b" filter="url(#gold-glow)"/>
+
+  <!-- Sword pommel -->
+  <ellipse cx="96" cy="132" rx="9" ry="7" fill="#f59e0b" filter="url(#gold-glow)"/>
+
+  <!-- Sword tip glow -->
+  <ellipse cx="96" cy="50" rx="5" ry="5" fill="#a78bfa" opacity="0.8" filter="url(#glow)"/>
+
+  <!-- Corner rune marks -->
+  <g opacity="0.5" fill="none" stroke="#f59e0b" stroke-width="1.5">
+    <path d="M 40 36 L 48 36 L 48 44"/>
+    <path d="M 152 36 L 144 36 L 144 44"/>
+    <path d="M 40 156 L 48 156 L 48 148"/>
+    <path d="M 152 156 L 144 156 L 144 148"/>
+  </g>
+
+  <!-- "G" letterform (stylized) - subtle -->
+  <!-- Replaced by sword/shield concept which reads better at small sizes -->
+</svg>

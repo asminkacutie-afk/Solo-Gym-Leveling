@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="bg512" cx="50%" cy="38%" r="65%">
+      <stop offset="0%" stop-color="#1e0a3c"/>
+      <stop offset="60%" stop-color="#0f0520"/>
+      <stop offset="100%" stop-color="#0a0a0f"/>
+    </radialGradient>
+    <radialGradient id="aura512" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#7c3aed" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#7c3aed" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="glow512" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="gold512" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <linearGradient id="blade512" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f1f5f9"/>
+      <stop offset="40%" stop-color="#a78bfa"/>
+      <stop offset="100%" stop-color="#4c1d95"/>
+    </linearGradient>
+    <linearGradient id="shield-fill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1e0a3c"/>
+      <stop offset="100%" stop-color="#0d0520"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background rounded square -->
+  <rect width="512" height="512" rx="96" fill="url(#bg512)"/>
+
+  <!-- Aura glow -->
+  <ellipse cx="256" cy="256" rx="220" ry="220" fill="url(#aura512)"/>
+
+  <!-- Outer rings -->
+  <circle cx="256" cy="256" r="224" fill="none" stroke="#7c3aed" stroke-width="3" opacity="0.5"/>
+  <circle cx="256" cy="256" r="216" fill="none" stroke="#f59e0b" stroke-width="1" opacity="0.25"/>
+
+  <!-- Main shield -->
+  <path d="M 256 68 L 392 126 L 392 256 C 392 338 328 406 256 432 C 184 406 120 338 120 256 L 120 126 Z"
+    fill="url(#shield-fill)" stroke="#7c3aed" stroke-width="5"/>
+
+  <!-- Shield inner border (gold) -->
+  <path d="M 256 90 L 368 140 L 368 256 C 368 324 312 382 256 404 C 200 382 144 324 144 256 L 144 140 Z"
+    fill="none" stroke="#f59e0b" stroke-width="2" opacity="0.55"/>
+
+  <!-- Shield center decoration - horizontal bar -->
+  <rect x="148" y="252" width="216" height="6" rx="3" fill="#7c3aed" opacity="0.4"/>
+
+  <!-- Sword blade (vertical center) -->
+  <rect x="244" y="100" width="24" height="224" rx="5"
+    fill="url(#blade512)" filter="url(#glow512)"/>
+
+  <!-- Blade fuller (center line) -->
+  <rect x="254" y="108" width="4" height="208" rx="2" fill="white" opacity="0.2"/>
+
+  <!-- Blade tip glow -->
+  <ellipse cx="256" cy="104" rx="14" ry="14" fill="#a78bfa" opacity="0.7" filter="url(#glow512)"/>
+
+  <!-- Crossguard -->
+  <rect x="192" y="266" width="144" height="22" rx="8" fill="#f59e0b" filter="url(#gold512)"/>
+
+  <!-- Crossguard accent -->
+  <rect x="200" y="270" width="128" height="6" rx="3" fill="#fbbf24" opacity="0.6"/>
+
+  <!-- Pommel -->
+  <ellipse cx="256" cy="342" rx="24" ry="18" fill="#f59e0b" filter="url(#gold512)"/>
+  <ellipse cx="256" cy="342" rx="14" ry="10" fill="#fbbf24"/>
+  <ellipse cx="256" cy="340" rx="6" ry="5" fill="white" opacity="0.4"/>
+
+  <!-- Top shield ornament -->
+  <path d="M 228 82 L 256 64 L 284 82" fill="none" stroke="#f59e0b" stroke-width="3"
+    stroke-linecap="round" filter="url(#gold512)" opacity="0.8"/>
+
+  <!-- Corner rune brackets -->
+  <g fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round" opacity="0.6">
+    <path d="M 88 88 L 110 88 L 110 110"/>
+    <path d="M 424 88 L 402 88 L 402 110"/>
+    <path d="M 88 424 L 110 424 L 110 402"/>
+    <path d="M 424 424 L 402 424 L 402 402"/>
+  </g>
+
+  <!-- Side rune marks on shield -->
+  <g fill="none" stroke="#7c3aed" stroke-width="2" opacity="0.5">
+    <line x1="136" y1="200" x2="152" y2="200"/>
+    <line x1="144" y1="192" x2="144" y2="208"/>
+    <line x1="360" y1="200" x2="376" y2="200"/>
+    <line x1="368" y1="192" x2="368" y2="208"/>
+    <line x1="136" y1="300" x2="152" y2="300"/>
+    <line x1="360" y1="300" x2="376" y2="300"/>
+  </g>
+
+  <!-- Star particles (top left / right) -->
+  <g fill="#f59e0b" opacity="0.7" filter="url(#gold512)">
+    <polygon points="176,130 180,142 192,142 182,150 186,162 176,154 166,162 170,150 160,142 172,142" transform="scale(0.5) translate(188,104)"/>
+    <polygon points="176,130 180,142 192,142 182,150 186,162 176,154 166,162 170,150 160,142 172,142" transform="scale(0.5) translate(260,104)"/>
+  </g>
+</svg>
