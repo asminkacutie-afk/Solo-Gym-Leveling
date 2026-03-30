@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { param, validationResult } from "express-validator";
-import { PrismaClient, Discipline } from "@prisma/client";
+import { PrismaClient, Discipline, Prisma } from "@prisma/client";
 import { authenticate } from "../middleware/auth";
 import { createError } from "../middleware/error";
 import { applyXPGain } from "../services/xp.service";
@@ -124,7 +124,7 @@ async function getOrCreateTodayQuests(
           date: today,
           key: template.key,
           description: template.description,
-          requirement: template.requirement,
+          requirement: template.requirement as Prisma.InputJsonValue,
           xpReward: template.xpReward,
         },
       });
