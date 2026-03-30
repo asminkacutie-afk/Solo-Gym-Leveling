@@ -33,7 +33,7 @@ export default function HunterCard({ profile, compact = false, className }: Hunt
   const powerScore = Math.round(profile.leaderboardEntry?.totalPowerScore ?? 0)
 
   const slayerCount = profile.achievements?.filter(a =>
-    a.achievement.key.startsWith('slayer_')
+    a.achievement?.key.startsWith('slayer_')
   ).length ?? 0
 
   if (compact) {
@@ -120,16 +120,16 @@ export default function HunterCard({ profile, compact = false, className }: Hunt
           </div>
 
           {/* Slayer badges */}
-          {profile.achievements && profile.achievements.filter(a => a.achievement.key.startsWith('slayer_')).length > 0 && (
+          {profile.achievements && profile.achievements.filter(a => a.achievement?.key.startsWith('slayer_')).length > 0 && (
             <div className="flex gap-1 mt-3 flex-wrap">
               {profile.achievements
-                .filter(a => a.achievement.key.startsWith('slayer_'))
+                .filter(a => a.achievement?.key.startsWith('slayer_'))
                 .slice(0, 6)
                 .map(a => (
-                  <span key={a.id} title={a.achievement.name}
+                  <span key={a.id} title={a.achievement?.name}
                     className="text-lg cursor-help"
                   >
-                    {a.achievement.icon}
+                    {a.achievement?.icon}
                   </span>
                 ))}
             </div>

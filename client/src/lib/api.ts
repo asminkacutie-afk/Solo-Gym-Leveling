@@ -182,6 +182,7 @@ export interface Monster {
   league: string
   stats: Record<string, number>
   totalPower: number
+  difficultyMult: number
   loreText?: string
   defeatCount?: number
 }

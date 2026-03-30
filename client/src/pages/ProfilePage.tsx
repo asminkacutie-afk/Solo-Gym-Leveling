@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import { User, Trophy, Skull, BarChart2, Weight } from 'lucide-react'
 import { useAuthStore } from '../store/authStore'
 import { profile, bodyComp } from '../lib/api'
-import type { PRRecord, UserMonsterKill, BodyCompEntry } from '../lib/api'
+import type { User as ApiUser, DisciplineData, PRRecord, UserMonsterKill, BodyCompEntry } from '../lib/api'
 import DisciplineRadarChart from '../components/character/RadarChart'
 import StatBar from '../components/ui/StatBar'
 const HunterCharacterSVG = lazy(() => import('../components/character/HunterCharacterSVG'))
@@ -38,7 +38,7 @@ const TABS = [
 type Tab = (typeof TABS)[number]['id']
 
 // ─── Hunter card ─────────────────────────────────────────────────────────
-function HunterCard({ user }: { user: ReturnType<typeof useAuthStore>['user'] }) {
+function HunterCard({ user }: { user: ApiUser | null }) {
   if (!user) return null
   return (
     <div className="card-glow rounded-2xl bg-background-card p-6">
@@ -55,7 +55,7 @@ function HunterCard({ user }: { user: ReturnType<typeof useAuthStore>['user'] })
             }
           >
             <HunterCharacterSVG
-              bodyFat={user.bodyFat ?? 25}
+              bodyFat={user.bodyComp?.bodyFatPct ?? 25}
               powerScore={user.powerScore ?? 0}
               gender={(user.gender as 'male' | 'female') ?? 'male'}
               size={120}
@@ -104,7 +104,7 @@ function HunterCard({ user }: { user: ReturnType<typeof useAuthStore>['user'] })
 }
 
 // ─── Stats tab ────────────────────────────────────────────────────────────
-function StatsTab({ user }: { user: ReturnType<typeof useAuthStore>['user'] }) {
+function StatsTab({ user }: { user: ApiUser | null }) {
   if (!user) return null
   return (
     <div className="space-y-6">
@@ -118,7 +118,7 @@ function StatsTab({ user }: { user: ReturnType<typeof useAuthStore>['user'] }) {
 
       {/* Per discipline */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {(user.disciplines ?? []).map((disc) => {
+        {(user.disciplines ?? []).map((disc: DisciplineData) => {
           const pct = calculateLevelProgress(disc.xp, disc.xpToNext)
           const color = disciplineColor(disc.name)
           return (

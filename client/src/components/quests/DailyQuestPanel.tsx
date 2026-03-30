@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { CheckCircle2, Circle, Flame, Star, Zap } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '../../lib/utils'
-import { api } from '../../lib/api'
+import { quests as questsApi } from '../../lib/api'
 import type { DailyQuest } from '../../../../shared/types'
 
 interface QuestWithProgress extends DailyQuest {
@@ -16,10 +16,11 @@ export default function DailyQuestPanel() {
   const [allDone, setAllDone] = useState(false)
 
   useEffect(() => {
-    api.quests.getToday()
-      .then(res => {
-        setQuests(res.data)
-        setAllDone(res.data.every((q: QuestWithProgress) => q.isComplete))
+    questsApi.getToday()
+      .then((data) => {
+        const typed = data as unknown as QuestWithProgress[]
+        setQuests(typed)
+        setAllDone(typed.every((q) => q.isComplete))
       })
       .catch(console.error)
       .finally(() => setLoading(false))

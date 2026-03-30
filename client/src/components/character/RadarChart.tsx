@@ -41,7 +41,7 @@ interface CustomTickProps {
   payload?: { value: string }
   cx?: number
   cy?: number
-  textAnchor?: string
+  textAnchor?: 'end' | 'inherit' | 'middle' | 'start'
 }
 
 function CustomAngleTick({ x = 0, y = 0, payload, cx = 0, cy = 0, textAnchor }: CustomTickProps) {

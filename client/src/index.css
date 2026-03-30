@@ -81,15 +81,15 @@ h1, h2, h3, .font-display { font-family: 'Cinzel', serif; }
 
 /* Combat flash — purple on set-logged */
 @keyframes combat-flash {
-  0%   { box-shadow: 0 0 0 0px rgba(124,58,237,0),    transform: scale(1); }
-  25%  { box-shadow: 0 0 0 4px rgba(124,58,237,0.88), transform: scale(1.013); }
-  100% { box-shadow: 0 0 0 0px rgba(124,58,237,0),    transform: scale(1); }
+  0%   { box-shadow: 0 0 0 0px rgba(124,58,237,0);    transform: scale(1); }
+  25%  { box-shadow: 0 0 0 4px rgba(124,58,237,0.88); transform: scale(1.013); }
+  100% { box-shadow: 0 0 0 0px rgba(124,58,237,0);    transform: scale(1); }
 }
 /* PR flash — gold */
 @keyframes combat-pr-flash {
-  0%   { box-shadow: 0 0 0 0px rgba(245,158,11,0),    transform: scale(1); }
-  25%  { box-shadow: 0 0 0 5px rgba(245,158,11,0.92), transform: scale(1.018); }
-  100% { box-shadow: 0 0 0 0px rgba(245,158,11,0),    transform: scale(1); }
+  0%   { box-shadow: 0 0 0 0px rgba(245,158,11,0);    transform: scale(1); }
+  25%  { box-shadow: 0 0 0 5px rgba(245,158,11,0.92); transform: scale(1.018); }
+  100% { box-shadow: 0 0 0 0px rgba(245,158,11,0);    transform: scale(1); }
 }
 /* Floating damage number */
 @keyframes damage-text {

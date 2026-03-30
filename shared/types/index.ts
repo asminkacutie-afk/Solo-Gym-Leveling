@@ -84,6 +84,7 @@ export interface UserProfile {
   disciplines?: UserDiscipline[];
   leaderboardEntry?: LeaderboardEntry | null;
   streakData?: UserStreak | null;
+  achievements?: UserAchievement[];
 }
 
 export interface UserStreak {

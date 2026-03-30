@@ -6,10 +6,11 @@ import { cn } from '../../lib/utils'
 const HunterCharacterSVG = lazy(() => import('./HunterCharacterSVG'))
 
 interface Props {
-  currentBF?: number
+  currentBodyFat?: number | null
+  currentWeight?: number | null
   powerScore?: number
   gender?: 'male' | 'female'
-  onSetMeasurement?: (bf: number) => void
+  onSetCurrent?: (bf: number) => void
   className?: string
 }
 
@@ -36,12 +37,13 @@ function getStageForBF(bf: number): Stage {
 }
 
 export default function BFSlider({
-  currentBF = 25,
+  currentBodyFat,
   powerScore = 0,
   gender = 'male',
-  onSetMeasurement,
+  onSetCurrent,
   className,
 }: Props) {
+  const currentBF = currentBodyFat ?? 25
   const [previewBF, setPreviewBF] = useState(currentBF)
   const [isDragging, setIsDragging] = useState(false)
 
@@ -187,9 +189,9 @@ export default function BFSlider({
       </div>
 
       {/* Set measurement button */}
-      {onSetMeasurement && (
+      {onSetCurrent && (
         <button
-          onClick={() => onSetMeasurement(previewBF)}
+          onClick={() => onSetCurrent(previewBF)}
           disabled={Math.abs(previewBF - currentBF) < 0.1}
           className={cn(
             'w-full py-3 rounded-xl font-display font-semibold text-sm transition-all',
