@@ -27,6 +27,10 @@ out/
 .env.production.local
 .env.production
 .env.staging
+# Explicitly ignore nested .env files in all workspaces
+server/.env
+client/.env
+shared/.env
 
 # ============================================================
 # Prisma generated files

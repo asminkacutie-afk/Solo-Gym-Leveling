@@ -1,6 +1,12 @@
 import dotenv from "dotenv";
+import path from "path";
 
-dotenv.config();
+// Only load .env file in non-production environments.
+// On Railway (NODE_ENV=production) environment variables are injected
+// directly into the process — dotenv must not override them.
+if (process.env.NODE_ENV !== "production") {
+  dotenv.config({ path: path.resolve(__dirname, "../../.env") });
+}
 
 if (!process.env.JWT_SECRET) {
   throw new Error("JWT_SECRET environment variable is required but not set.");
