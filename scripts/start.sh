@@ -1,27 +1,32 @@
 #!/bin/sh
 set -e
 
-# ── Validate DATABASE_URL ────────────────────────────────────────────────────
-if [ -z "$DATABASE_URL" ]; then
-  echo "FATAL: DATABASE_URL is not set."
+# ── Resolve database URL ──────────────────────────────────────────────────────
+# Prefer DATABASE_PUBLIC_URL (Railway's external URL) over DATABASE_URL
+# (Railway's internal URL) so connections from the deploy container work.
+DB_URL="${DATABASE_PUBLIC_URL:-$DATABASE_URL}"
+
+if [ -z "$DB_URL" ]; then
+  echo "FATAL: Neither DATABASE_PUBLIC_URL nor DATABASE_URL is set."
   echo "Go to your Railway service → Variables and add DATABASE_URL pointing"
   echo "to your Railway Postgres instance, e.g. \${{Postgres.DATABASE_URL}}"
   exit 1
 fi
 
-# Print the host portion only (never the password)
-DB_HOST=$(echo "$DATABASE_URL" | sed 's|.*@||' | sed 's|/.*||')
-echo "DATABASE_URL host: $DB_HOST"
+# Print host only — never log passwords
+DB_HOST=$(echo "$DB_URL" | sed 's|.*@||' | sed 's|/.*||')
+echo "Database host: $DB_HOST"
 
+# Only block if the resolved URL still points to localhost
 if echo "$DB_HOST" | grep -q "localhost\|127\.0\.0\.1"; then
-  echo "FATAL: DATABASE_URL points to localhost — this will not work on Railway."
-  echo "Set DATABASE_URL to your Railway Postgres URL in the service Variables tab."
+  echo "FATAL: Resolved database URL points to localhost — this will not work on Railway."
+  echo "Set DATABASE_PUBLIC_URL or DATABASE_URL to your Railway Postgres URL."
   exit 1
 fi
 
 # ── Run migrations ────────────────────────────────────────────────────────────
 echo "Running database migrations..."
-DATABASE_URL="$DATABASE_URL" npx prisma migrate deploy
+DATABASE_URL="$DB_URL" npx prisma migrate deploy
 
 # ── Start server ──────────────────────────────────────────────────────────────
 echo "Starting GymRPG server..."
