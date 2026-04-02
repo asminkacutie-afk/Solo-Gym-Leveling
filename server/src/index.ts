@@ -1,4 +1,5 @@
 import http from "http";
+import path from "path";
 import express, { Request, Response, NextFunction } from "express";
 import helmet from "helmet";
 import cors from "cors";
@@ -109,7 +110,16 @@ app.use("/api/leaderboard", leaderboardRouter);
 app.use("/api/quests", questsRouter);
 app.use("/api/tournaments", tournamentsRouter);
 
-// ─── 404 Handler ──────────────────────────────────────────────────────────────
+// ─── Serve React Frontend ─────────────────────────────────────────────────────
+const clientDist = path.resolve(__dirname, "../../client/dist");
+app.use(express.static(clientDist));
+
+// All non-API routes hand off to React Router
+app.get(/^(?!\/api|\/health).*/, (_req: Request, res: Response): void => {
+  res.sendFile(path.join(clientDist, "index.html"));
+});
+
+// ─── 404 Handler (API routes only) ────────────────────────────────────────────
 app.use((_req: Request, res: Response): void => {
   res.status(404).json({
     error: "NotFound",
