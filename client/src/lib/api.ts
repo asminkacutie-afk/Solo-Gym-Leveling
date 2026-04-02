@@ -248,7 +248,19 @@ export const auth = {
   login: (payload: LoginPayload) =>
     api.post<AuthResponse>('/auth/login', payload).then((r) => r.data),
 
-  me: () => api.get<User>('/auth/me').then((r) => r.data),
+  me: () => api.get('/auth/me').then((r) => {
+    const d = r.data as Record<string, unknown> & {
+      leaderboardEntry?: { totalPowerScore?: number; league?: string; totalLevel?: number }
+      streakData?: { weeklyStreak?: number }
+    }
+    return {
+      ...d,
+      totalLevel: d.leaderboardEntry?.totalLevel ?? 6,
+      powerScore: d.leaderboardEntry?.totalPowerScore ?? 0,
+      league: (d.leaderboardEntry?.league ?? 'IRON') as User['league'],
+      streak: d.streakData?.weeklyStreak ?? 0,
+    } as User
+  }),
 
   logout: () => api.post<void>('/auth/logout').then((r) => r.data),
 }
