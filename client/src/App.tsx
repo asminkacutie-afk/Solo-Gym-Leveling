@@ -29,7 +29,9 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
 export default function App() {
   const { accessToken, setAuth, clearAuth, setLoading } = useAuthStore()
 
-  // Hydrate user from token on mount
+  // Hydrate full user profile whenever the access token changes.
+  // This covers: initial page load with saved token, and post-registration
+  // where setAuth is called with a partial user from the register response.
   useEffect(() => {
     if (!accessToken) return
 
@@ -45,9 +47,8 @@ export default function App() {
       .finally(() => {
         setLoading(false)
       })
-    // Only run on mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accessToken])
 
   return (
     <div className="min-h-screen bg-background text-white">

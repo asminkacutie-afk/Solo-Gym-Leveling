@@ -187,7 +187,7 @@ export default function DashboardPage() {
         <StatTile
           icon={<Zap size={18} />}
           label="Power Score"
-          value={user.powerScore.toLocaleString()}
+          value={(user.powerScore ?? 0).toLocaleString()}
           color="purple"
         />
         <StatTile
