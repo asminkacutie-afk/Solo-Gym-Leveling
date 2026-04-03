@@ -73,7 +73,8 @@ export function leagueColor(league: string): string {
 }
 
 // ─── League badge emoji ────────────────────────────────────────────────────
-export function leagueBadgeEmoji(league: string): string {
+export function leagueBadgeEmoji(league?: string | null): string {
+  if (!league) return '🏆'
   const map: Record<string, string> = {
     iron: '🔩',
     bronze: '🥉',
@@ -166,8 +167,8 @@ export function formatDate(date: string | Date): string {
 }
 
 // ─── League rank class name ─────────────────────────────────────────────────
-export function leagueBadgeClass(league: string): string {
-  const l = league.toLowerCase()
+export function leagueBadgeClass(league?: string | null): string {
+  const l = (league ?? '').toLowerCase()
   const map: Record<string, string> = {
     iron: 'badge-iron',
     bronze: 'badge-bronze',

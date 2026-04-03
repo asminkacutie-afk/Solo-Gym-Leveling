@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, Component, ReactNode } from 'react'
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useAuthStore } from './store/authStore'
 import { auth } from './lib/api'
@@ -13,13 +13,51 @@ import TournamentPage from './pages/TournamentPage'
 import MonstersPage from './pages/MonstersPage'
 import InstallBanner from './components/ui/InstallBanner'
 
+// ─── Error Boundary ────────────────────────────────────────────────────────
+class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
+  state = { error: null }
+  static getDerivedStateFromError(error: Error) { return { error } }
+  render() {
+    if (this.state.error) {
+      return (
+        <div className="min-h-screen bg-background flex items-center justify-center p-8">
+          <div className="text-center max-w-md">
+            <p className="text-red-400 text-lg font-bold mb-2">Something went wrong</p>
+            <p className="text-gray-500 text-sm mb-6">{(this.state.error as Error).message}</p>
+            <button
+              className="btn-primary"
+              onClick={() => { this.setState({ error: null }); window.location.href = '/' }}
+            >
+              Reload
+            </button>
+          </div>
+        </div>
+      )
+    }
+    return this.props.children
+  }
+}
+
 // ─── Private Route Guard ───────────────────────────────────────────────────
 function PrivateRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, accessToken } = useAuthStore()
+  const { isAuthenticated, accessToken, isLoading } = useAuthStore()
   const location = useLocation()
 
   if (!isAuthenticated && !accessToken) {
     return <Navigate to="/login" state={{ from: location }} replace />
+  }
+
+  // While auth.me() is resolving the full user profile, show a full-screen
+  // loader so partial user data never reaches components that assume completeness.
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 rounded-full border-4 border-purple-600 border-t-transparent animate-spin" />
+          <p className="text-gray-400 text-sm font-display tracking-widest uppercase">Awakening...</p>
+        </div>
+      </div>
+    )
   }
 
   return <>{children}</>
@@ -51,6 +89,7 @@ export default function App() {
   }, [accessToken])
 
   return (
+    <ErrorBoundary>
     <div className="min-h-screen bg-background text-white">
       <InstallBanner />
       <Routes>
@@ -79,5 +118,6 @@ export default function App() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </div>
+    </ErrorBoundary>
   )
 }
