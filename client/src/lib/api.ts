@@ -258,9 +258,23 @@ export const auth = {
     const d = r.data as Record<string, unknown> & {
       leaderboardEntry?: { totalPowerScore?: number; league?: string; totalLevel?: number }
       streakData?: { weeklyStreak?: number }
+      disciplines?: Array<{
+        id: string; discipline: string; level: number; xp: number; xpToNext: number
+        rankBadge: string; str: number; end: number; pwr: number; spd: number; rec: number
+      }>
     }
+    const disciplines: DisciplineData[] = (d.disciplines ?? []).map((disc) => ({
+      id: disc.id,
+      name: disc.discipline,
+      level: disc.level,
+      xp: disc.xp,
+      xpToNext: disc.xpToNext,
+      rank: disc.rankBadge,
+      stats: { str: disc.str, end: disc.end, pwr: disc.pwr, spd: disc.spd, rec: disc.rec },
+    }))
     return {
       ...d,
+      disciplines,
       totalLevel: d.leaderboardEntry?.totalLevel ?? 6,
       powerScore: d.leaderboardEntry?.totalPowerScore ?? 0,
       league: (d.leaderboardEntry?.league ?? 'IRON') as User['league'],

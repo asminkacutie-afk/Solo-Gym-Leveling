@@ -57,7 +57,8 @@ export function TierBadge({ tier }: { tier: string }) {
   return <Badge variant={map[tier] ?? 'default'}>{tier}</Badge>
 }
 
-export function LeagueBadge({ league }: { league: string }) {
+export function LeagueBadge({ league }: { league?: string | null }) {
+  const safe = league ?? ''
   const map: Record<string, BadgeVariant> = {
     IRON: 'iron', AWAKENING: 'purple', BRONZE: 'bronze', SILVER: 'silver', GOLD: 'gold', MYTHIC: 'mythic'
   }
@@ -65,8 +66,8 @@ export function LeagueBadge({ league }: { league: string }) {
     IRON: '⚙️', AWAKENING: '🌊', BRONZE: '🔶', SILVER: '⚪', GOLD: '👑', MYTHIC: '🔮'
   }
   return (
-    <Badge variant={map[league] ?? 'default'}>
-      {icons[league]} {league.charAt(0) + league.slice(1).toLowerCase()}
+    <Badge variant={map[safe] ?? 'default'}>
+      {icons[safe]} {safe ? safe.charAt(0) + safe.slice(1).toLowerCase() : '—'}
     </Badge>
   )
 }

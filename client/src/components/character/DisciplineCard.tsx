@@ -23,8 +23,8 @@ const DISCIPLINE_GLOW: Record<string, string> = {
   recovery: 'rgba(139,92,246,0.4)',
 }
 
-function getDisciplineGlow(name: string): string {
-  return DISCIPLINE_GLOW[name.toLowerCase()] ?? 'rgba(139,92,246,0.4)'
+function getDisciplineGlow(name?: string | null): string {
+  return DISCIPLINE_GLOW[(name ?? '').toLowerCase()] ?? 'rgba(139,92,246,0.4)'
 }
 
 // ─── Rank badge styles ─────────────────────────────────────────────────────
@@ -37,8 +37,8 @@ const RANK_STYLES: Record<string, { bg: string; border: string; text: string }> 
   mythic:   { bg: 'rgba(109,40,217,0.2)', border: '#a78bfa', text: '#c4b5fd' },
 }
 
-function getRankStyle(rank: string) {
-  return RANK_STYLES[rank.toLowerCase()] ?? RANK_STYLES.iron
+function getRankStyle(rank?: string | null) {
+  return RANK_STYLES[(rank ?? '').toLowerCase()] ?? RANK_STYLES.iron
 }
 
 const STAT_ABBREV: Record<string, string> = {

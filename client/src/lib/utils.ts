@@ -181,8 +181,8 @@ export function leagueBadgeClass(league?: string | null): string {
 }
 
 // ─── Rank badge class ──────────────────────────────────────────────────────
-export function rankBadgeClass(rank: string): string {
-  const r = rank.toLowerCase()
+export function rankBadgeClass(rank?: string | null): string {
+  const r = (rank ?? '').toLowerCase()
   const map: Record<string, string> = {
     iron: 'badge-iron',
     bronze: 'badge-bronze',

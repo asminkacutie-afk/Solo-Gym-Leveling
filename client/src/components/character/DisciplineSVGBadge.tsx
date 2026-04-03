@@ -24,8 +24,8 @@ const DISCIPLINE_COLORS: Record<string, string> = {
   recovery:   '#8b5cf6',
 }
 
-function defaultColor(discipline: string): string {
-  return DISCIPLINE_COLORS[discipline.toLowerCase()] ?? '#8b5cf6'
+function defaultColor(discipline?: string | null): string {
+  return DISCIPLINE_COLORS[(discipline ?? '').toLowerCase()] ?? '#8b5cf6'
 }
 
 // ─── SVG icon paths for each discipline ──────────────────────────────────────
@@ -240,8 +240,8 @@ const ICON_MAP: Record<string, IconRenderer> = {
   recovery:    SynthesisIcon,
 }
 
-function getIcon(discipline: string): IconRenderer {
-  return ICON_MAP[discipline.toLowerCase()] ?? SynthesisIcon
+function getIcon(discipline?: string | null): IconRenderer {
+  return ICON_MAP[(discipline ?? '').toLowerCase()] ?? SynthesisIcon
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -254,7 +254,7 @@ export default function DisciplineSVGBadge({
   className,
 }: DisciplineSVGBadgeProps) {
   const resolvedColor = color ?? defaultColor(discipline)
-  const filterId = `disc-glow-${discipline.toLowerCase().replace(/\s+/g, '-')}`
+  const filterId = `disc-glow-${(discipline ?? '').toLowerCase().replace(/\s+/g, '-')}`
   const Icon = getIcon(discipline)
 
   return (

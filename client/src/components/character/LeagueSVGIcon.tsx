@@ -20,8 +20,8 @@ const LEAGUE_COLORS: Record<string, string> = {
   mythic:    '#a78bfa',
 }
 
-function leagueColor(league: string): string {
-  return LEAGUE_COLORS[league.toLowerCase()] ?? '#8b5cf6'
+function leagueColor(league?: string | null): string {
+  return LEAGUE_COLORS[(league ?? '').toLowerCase()] ?? '#8b5cf6'
 }
 
 // ─── CSS animation injection ──────────────────────────────────────────────────
@@ -236,7 +236,7 @@ export default function LeagueSVGIcon({
 }: LeagueSVGIconProps) {
   injectLeagueAnim()
 
-  const key = league.toLowerCase()
+  const key = (league ?? '').toLowerCase()
   const color = leagueColor(key)
   const filterId = `league-glow-${key}`
 

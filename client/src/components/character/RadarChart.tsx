@@ -30,8 +30,8 @@ const DISCIPLINE_LABEL_COLOR: Record<string, string> = {
   recovery:  '#8b5cf6',
 }
 
-function getLabelColor(name: string): string {
-  return DISCIPLINE_LABEL_COLOR[name.toLowerCase()] ?? '#9ca3af'
+function getLabelColor(name?: string | null): string {
+  return DISCIPLINE_LABEL_COLOR[(name ?? '').toLowerCase()] ?? '#9ca3af'
 }
 
 // ─── Custom angle axis tick ────────────────────────────────────────────────

@@ -27,6 +27,10 @@ import { setupCronJobs } from "./cron";
 
 const app = express();
 
+// Trust Railway's reverse proxy so express-rate-limit can read the real
+// client IP from X-Forwarded-For rather than the proxy's internal address.
+app.set("trust proxy", 1);
+
 // ─── Security & Logging ───────────────────────────────────────────────────────
 app.use(
   helmet({
