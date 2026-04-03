@@ -386,7 +386,39 @@ export const monsters = {
 
 // ─── Quests ────────────────────────────────────────────────────────────────
 export const quests = {
-  getToday: () => api.get<Quest[]>('/quests/today').then((r) => r.data),
+  getToday: () =>
+    api
+      .get<{ quests: Array<{
+        id: string
+        questId: string
+        progress: number
+        isComplete: boolean
+        completedAt: string | null
+        quest: { id: string; key: string; description: string; xpReward: number; requirement: unknown }
+      }>; date: string }>('/quests/today')
+      .then((r) => {
+        const today = new Date()
+        today.setHours(23, 59, 59, 999)
+        return r.data.quests.map((uq): Quest => {
+          const req = (uq.quest.requirement ?? {}) as Record<string, unknown>
+          const target =
+            typeof req.count === 'number' ? req.count :
+            typeof req.targetKg === 'number' ? req.targetKg :
+            typeof req.minDisciplines === 'number' ? req.minDisciplines : 1
+          return {
+            id: uq.id,
+            title: uq.quest.key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
+            description: uq.quest.description,
+            type: String(req.type ?? 'general'),
+            target,
+            progress: uq.progress,
+            xpReward: uq.quest.xpReward,
+            discipline: req.discipline ? String(req.discipline) : undefined,
+            expiresAt: today.toISOString(),
+            completed: uq.isComplete,
+          }
+        })
+      }),
 
   updateProgress: (questId: string, progress: number) =>
     api
