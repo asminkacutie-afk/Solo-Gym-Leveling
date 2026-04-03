@@ -1,11 +1,11 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { query, param, validationResult } from "express-validator";
-import { PrismaClient, Discipline } from "@prisma/client";
+import { Discipline } from "@prisma/client";
 import { authenticate, optionalAuth } from "../middleware/auth";
+import prisma from "../lib/prisma";
 import { createError } from "../middleware/error";
 
 const router = Router();
-const prisma = new PrismaClient();
 
 // GET /api/exercises — search by name and filter by discipline
 router.get(

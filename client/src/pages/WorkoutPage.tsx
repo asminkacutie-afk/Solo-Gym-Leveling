@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react'
 import { Dumbbell, Play, Square, Clock, Zap, Star, ChevronDown, ChevronUp } from 'lucide-react'
 import { useWorkoutStore } from '../store/workoutStore'
 import { workouts } from '../lib/api'
-import type { WorkoutSet, WorkoutSession } from '../lib/api'
+import type { WorkoutSet, WorkoutSession, LevelUp } from '../lib/api'
 import WorkoutLogger from '../components/workout/WorkoutLogger'
 import RestTimer from '../components/workout/RestTimer'
 import PRCelebration from '../components/workout/PRCelebration'
@@ -51,9 +51,9 @@ function SessionSummaryModal({
             <p className="font-display text-6xl font-black gradient-text-mythic mb-4">
               LEVEL UP!
             </p>
-            {levelUps.map((d) => (
-              <p key={d} className="text-2xl text-gold-400 font-bold animate-float">
-                {d} advanced!
+            {levelUps.map((d: LevelUp) => (
+              <p key={d.discipline} className="text-2xl text-gold-400 font-bold animate-float">
+                {d.discipline} Lv.{d.oldLevel} → {d.newLevel}!
               </p>
             ))}
             <p className="text-gray-400 mt-4 text-sm">Tap to continue</p>

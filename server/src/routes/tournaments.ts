@@ -1,11 +1,11 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { param, query, validationResult } from "express-validator";
-import { PrismaClient, League } from "@prisma/client";
+import { League } from "@prisma/client";
 import { authenticate, optionalAuth } from "../middleware/auth";
+import prisma from "../lib/prisma";
 import { createError } from "../middleware/error";
 
 const router = Router();
-const prisma = new PrismaClient();
 
 // GET /api/tournaments/current — current month's tournament status per league
 router.get(

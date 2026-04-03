@@ -1,6 +1,7 @@
 import { Router, Request, Response, NextFunction } from "express";
-import { PrismaClient, League } from "@prisma/client";
+import { League } from "@prisma/client";
 import { authenticate } from "../middleware/auth";
+import prisma from "../lib/prisma";
 import { createError } from "../middleware/error";
 import {
   resolveBattle,
@@ -12,7 +13,6 @@ import {
 } from "../services/composition.service";
 
 const router = Router();
-const prisma = new PrismaClient();
 
 router.use(authenticate);
 

@@ -55,7 +55,7 @@ function HunterCard({ user }: { user: ApiUser | null }) {
             }
           >
             <HunterCharacterSVG
-              bodyFat={user.bodyComp?.bodyFatPct ?? 25}
+              bodyFat={user.bodyComp?.bodyFat ?? 25}
               powerScore={user.powerScore ?? 0}
               gender={(user.gender as 'male' | 'female') ?? 'male'}
               size={120}
@@ -310,7 +310,7 @@ function BodyCompTab() {
     try {
       await bodyComp.log({
         weight: parseFloat(form.weight),
-        bodyFatPct: form.bodyFatPct ? parseFloat(form.bodyFatPct) : undefined,
+        bodyFat: form.bodyFatPct ? parseFloat(form.bodyFatPct) : undefined,
         method: form.method,
       })
       const updated = await bodyComp.getHistory()
@@ -330,17 +330,17 @@ function BodyCompTab() {
     .map((h) => ({
       date: formatDate(h.recordedAt),
       weight: h.weight,
-      bf: h.bodyFatPct,
+      bf: h.bodyFat,
     }))
 
-  const currentBF = history[0]?.bodyFatPct
+  const currentBF = history[0]?.bodyFat
 
   if (loading) return <div className="text-center text-gray-500 py-12">Loading body comp...</div>
 
   const handleSetCurrent = async (bf: number) => {
     setSubmitting(true)
     try {
-      await bodyComp.log({ weight: history[0]?.weight ?? 80, bodyFatPct: bf, method: 'manual' })
+      await bodyComp.log({ weight: history[0]?.weight ?? 80, bodyFat: bf, method: 'manual' })
       const updated = await bodyComp.getHistory()
       setHistory(updated)
     } finally {

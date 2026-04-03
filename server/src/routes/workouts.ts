@@ -1,7 +1,8 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { body, param, query, validationResult } from "express-validator";
-import { PrismaClient, Discipline } from "@prisma/client";
+import { Discipline } from "@prisma/client";
 import { authenticate } from "../middleware/auth";
+import prisma from "../lib/prisma";
 import { createError } from "../middleware/error";
 import {
   calculateXPForSet,
@@ -13,7 +14,6 @@ import { updateLeaderboard } from "../services/stats.service";
 import { calculateDisciplineStats } from "../services/xp.service";
 
 const router = Router();
-const prisma = new PrismaClient();
 
 router.use(authenticate);
 

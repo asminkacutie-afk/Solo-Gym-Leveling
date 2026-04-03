@@ -1,12 +1,12 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { param, validationResult } from "express-validator";
-import { PrismaClient, Discipline, Prisma } from "@prisma/client";
+import { Discipline, Prisma, PrismaClient } from "@prisma/client";
 import { authenticate } from "../middleware/auth";
+import prisma from "../lib/prisma";
 import { createError } from "../middleware/error";
 import { applyXPGain } from "../services/xp.service";
 
 const router = Router();
-const prisma = new PrismaClient();
 
 router.use(authenticate);
 

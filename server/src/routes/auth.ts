@@ -2,13 +2,13 @@ import { Router, Request, Response, NextFunction } from "express";
 import { body, validationResult } from "express-validator";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { PrismaClient, Discipline } from "@prisma/client";
+import { Discipline } from "@prisma/client";
 import { config } from "../config";
+import prisma from "../lib/prisma";
 import { authenticate } from "../middleware/auth";
 import { createError } from "../middleware/error";
 
 const router = Router();
-const prisma = new PrismaClient();
 
 function generateAccessToken(payload: {
   userId: string;

@@ -1,11 +1,10 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { body, validationResult } from "express-validator";
-import { PrismaClient } from "@prisma/client";
 import { authenticate } from "../middleware/auth";
+import prisma from "../lib/prisma";
 import { createError } from "../middleware/error";
 
 const router = Router();
-const prisma = new PrismaClient();
 
 // GET /api/profile/me — full authenticated profile
 router.get(

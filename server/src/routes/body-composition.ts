@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { body, validationResult } from "express-validator";
-import { PrismaClient } from "@prisma/client";
 import { authenticate } from "../middleware/auth";
+import prisma from "../lib/prisma";
 import {
   getCompositionMultiplier,
   checkBFLeagueGate,
@@ -10,7 +10,6 @@ import {
 import { League } from "@prisma/client";
 
 const router = Router();
-const prisma = new PrismaClient();
 
 router.use(authenticate);
 

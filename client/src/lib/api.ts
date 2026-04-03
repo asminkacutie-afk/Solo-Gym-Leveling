@@ -123,6 +123,12 @@ export interface DisciplineData {
   stats: Record<string, number>
 }
 
+export interface LevelUp {
+  discipline: string
+  oldLevel: number
+  newLevel: number
+}
+
 export interface WorkoutSession {
   id: string
   userId: string
@@ -131,7 +137,7 @@ export interface WorkoutSession {
   notes?: string
   sets: WorkoutSet[]
   xpGained?: Record<string, number>
-  levelUps?: string[]
+  levelUps?: LevelUp[]
   prs?: PRRecord[]
 }
 
@@ -170,7 +176,7 @@ export interface BodyCompEntry {
   id: string
   userId: string
   weight: number
-  bodyFatPct?: number
+  bodyFat?: number
   method?: string
   recordedAt: string
 }
@@ -280,10 +286,13 @@ export const workouts = {
       .post<WorkoutSet>(`/workouts/sessions/${sessionId}/sets`, set)
       .then((r) => r.data),
 
-  getSessions: (limit = 20, offset = 0) =>
+  getSessions: (limit = 20, page = 1) =>
     api
-      .get<WorkoutSession[]>('/workouts/sessions', { params: { limit, offset } })
-      .then((r) => r.data),
+      .get<{ sessions: WorkoutSession[]; pagination: { page: number; limit: number; total: number; totalPages: number } }>(
+        '/workouts/sessions',
+        { params: { limit, page } },
+      )
+      .then((r) => r.data.sessions),
 
   getSession: (sessionId: string) =>
     api.get<WorkoutSession>(`/workouts/sessions/${sessionId}`).then((r) => r.data),
@@ -373,7 +382,7 @@ export const quests = {
 
 // ─── Body Composition ──────────────────────────────────────────────────────
 export const bodyComp = {
-  log: (data: { weight: number; bodyFatPct?: number; method?: string }) =>
+  log: (data: { weight: number; bodyFat?: number; method?: string }) =>
     api.post<BodyCompEntry>('/body-comp', data).then((r) => r.data),
 
   getHistory: (days = 90) =>

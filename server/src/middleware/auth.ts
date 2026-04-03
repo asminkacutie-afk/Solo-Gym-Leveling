@@ -61,6 +61,7 @@ export function authenticate(
       message: "Authentication token is invalid.",
       statusCode: 401,
     });
+    return;
   }
 }
 

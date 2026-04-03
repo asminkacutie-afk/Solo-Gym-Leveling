@@ -1,10 +1,10 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { query, param, validationResult } from "express-validator";
-import { PrismaClient, League } from "@prisma/client";
+import { League } from "@prisma/client";
 import { authenticate, optionalAuth } from "../middleware/auth";
+import prisma from "../lib/prisma";
 
 const router = Router();
-const prisma = new PrismaClient();
 
 // GET /api/leaderboard/global — paginated global leaderboard
 router.get(
